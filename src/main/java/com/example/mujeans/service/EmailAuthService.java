@@ -44,7 +44,7 @@ public class EmailAuthService {
         boolean success = false;
         MailDTO latestMail;
 
-        List<MailDTO> list = emailAuthRepository.findByEmailAndCertifiedYnOrderByCreatedAtDesc(mail.getEmail(), "N");
+        List<MailDTO> list = emailAuthRepository.findByEmailAndCodeAndCertifiedYnOrderByCreatedAtDesc(mail.getEmail(), mail.getCode(), "N");
 
         if (list.size() > 0){
             latestMail = list.get(0);
@@ -64,13 +64,13 @@ public class EmailAuthService {
             javaMailSender.send(message); // 메일 발송
 
             mailDto.setCode(ePw);
-            emailAuthRepository.save(mailDto);
+            MailDTO mailDTO = emailAuthRepository.save(mailDto);
 
         }catch(MailException es){
             es.printStackTrace();
             throw new IllegalArgumentException();
         }
-        return ePw; // 메일로 보냈던 인증 코드를 서버로 리턴
+        return mailDto.getCode(); // 메일로 보냈던 인증 코드를 서버로 리턴
     }
 
     public MimeMessage createMessage(MailDTO mailDto)throws MessagingException, UnsupportedEncodingException {
@@ -83,15 +83,14 @@ public class EmailAuthService {
 
         // 메일 내용 메일의 subtype을 html로 지정하여 html문법 사용 가능
 
-        /*
         String msg="";
         msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>";
-        msg += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">아래 확인 코드를 회원가입 화면에서 입력해주세요.</p>";
+        msg += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">이메일 인증 코드입니다.</p>";
         msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
         msg += ePw;
         msg += "</td></tr></tbody></table></div>";
-         */
 
+        /*
         StringBuffer emailcontent = new StringBuffer();
         emailcontent.append("<!DOCTYPE html>");
         emailcontent.append("<html>");
@@ -113,7 +112,7 @@ public class EmailAuthService {
                         "		감사합니다."																																															+
                         "	</p>"																																																	+
                         "	<a style=\"color: #FFF; text-decoration: none; text-align: center;\""																																	+
-                        "	href=\"http://192.168.1.43:9099/emailAuth/certified?email=" + mailDto.getEmail() + "\" target=\"_blank\">"														+
+                        "	href=\"http://localhost:9099/emailAuth/certified?email=" + mailDto.getEmail() + "\" target=\"_blank\">"														+
                         "		<p"																																																	+
                         "			style=\"display: inline-block; width: 210px; height: 45px; margin: 30px 5px 40px; background: #02b875; line-height: 45px; vertical-align: middle; font-size: 16px;\">"							+
                         "			메일 인증</p>"																																														+
@@ -123,9 +122,10 @@ public class EmailAuthService {
         );
         emailcontent.append("</body>");
         emailcontent.append("</html>");
+        */
 
-        message.setText(emailcontent.toString(), "utf-8", "html"); //내용, charset타입, subtype
-        message.setFrom(new InternetAddress(mailDto.getEmail(),"뮤진스 테스트")); //보내는 사람의 메일 주소, 보내는 사람 이름
+        message.setText(msg, "utf-8", "html"); //내용, charset타입, subtype
+        message.setFrom(new InternetAddress(mailDto.getEmail(),"뮤진스")); //보내는 사람의 메일 주소, 보내는 사람 이름
 
         return message;
     }

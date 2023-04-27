@@ -14,5 +14,5 @@ public interface EmailAuthRepository extends JpaRepository<MailDTO, Integer> {
     MailDTO save(MailDTO mailDTO);
 
     //이메일 코드 확인
-    List<MailDTO> findByEmailAndCertifiedYnOrderByCreatedAtDesc(String email, String certifiedYn);
+    List<MailDTO> findByEmailAndCodeAndCertifiedYnOrderByCreatedAtDesc(String email, String code, String certifiedYn);
 }

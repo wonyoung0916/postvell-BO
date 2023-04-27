@@ -72,16 +72,17 @@ public class EmailAuthController {
 
     @ResponseBody
     @PostMapping(value = "/sendEmail",  produces = "application/json; charset=UTF-8")
-    public void sendEmail(String email) {
+    public String sendEmail(String email) {
         log.info(" emailAuth/sendEmail ====================================>"+ email);
-        // 변수 초기화
+
+        //변수정리
         Gson gson = new Gson();
         HashMap<String, Object> map = new HashMap<>();
 
         String jsonString = "";
         String authCode = ""; //이메일 인증코드
         int code = 500;
-        String message = "이메일 인증에 실패했습니다.";
+        String message = "이메일 인증 코드 전송에 실패했습니다.";
 
         try {
 
@@ -90,16 +91,31 @@ public class EmailAuthController {
             mailDTO.setTitle("[뮤진스] 이메일 인증 번호입니다.");
 
             //emailAuthService.mailSend(mailDTO);
-            emailAuthService.sendSimpleMessage(mailDTO);
+            authCode = emailAuthService.sendSimpleMessage(mailDTO);
+            if (authCode != null && !authCode.equals("")){
+                code = 200;
+                message = "이메일 인증코드를 전송했습니다.";
+            }
 
 
         } catch (Exception e) {
+            code = 501;
+            message = "이메일 인증코드 전송중 오류가 발생했습니다.";
             log.error("Exception::"+e.getMessage());
             e.printStackTrace();
         }
 
+        //json
+        map.put("code", code);
+        map.put("message", message);
+        map.put("authCode", authCode);
+
+        jsonString = gson.toJson(map);
+
+        return jsonString;
     }
 
+    @ResponseBody
     @GetMapping(value = "/certified")
     public String certified(HttpServletRequest request,
                           MailDTO mailDTO) throws MessagingException {
@@ -125,7 +141,7 @@ public class EmailAuthController {
 
         }catch (Exception e){
             code = 501;
-            message = "이메일 전송중 오류가 발생했습니다.";
+            message = "오류가 발생했습니다.";
             e.printStackTrace();
         }
 
