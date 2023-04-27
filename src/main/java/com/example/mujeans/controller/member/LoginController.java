@@ -1,7 +1,6 @@
 package com.example.mujeans.controller.member;
 
 import com.example.mujeans.model.MemberDTO;
-import com.example.mujeans.repository.board.BoardRepository;
 import com.example.mujeans.service.member.LoginService;
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j2;

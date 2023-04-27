@@ -12,5 +12,6 @@ public interface LoginRepository extends JpaRepository<MemberDTO, Integer> {
 //    int findByEmailPw(String email, String pw);
     MemberDTO findByEmail(String email);
 
+    MemberDTO save(MemberDTO memberDTO);
 
 }
