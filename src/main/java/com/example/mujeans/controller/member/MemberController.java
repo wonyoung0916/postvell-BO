@@ -14,6 +14,7 @@ import java.util.List;
 
 @Log4j2
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/member")
 public class MemberController {
 

@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 @Log4j2
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/login")
 public class LoginController {
 
