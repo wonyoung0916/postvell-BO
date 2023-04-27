@@ -3,10 +3,17 @@ package com.example.mujeans.controller.member;
 import com.example.mujeans.model.MemberDTO;
 import com.example.mujeans.service.member.LoginService;
 import com.google.gson.Gson;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
 import java.util.HashMap;
 
 @Log4j2
@@ -17,6 +24,8 @@ public class LoginController {
 
     @Autowired
     private LoginService loginService;
+
+    private static final String secretKey = "kjdfhkjhdkjhfQEjtfsdkjfhksa321425"; //Token 체크시 필요한 암호키
 
     @ResponseBody
     @PostMapping("/loginProc")
@@ -33,11 +42,12 @@ public class LoginController {
             if(mem != null) {
                 String enPw = mem.getPw();
                 boolean result = loginService.isPwMatch(pw,enPw);
-
                 if(result == true) {
+                    String accessToken = createToken(email);
                     // 주고받는 API 형태로 변환
                     map.put("code", 200);
                     map.put("message", "로그인 성공");
+                    map.put("accessToken", accessToken);
                 } else {
                     throw new Exception();
                 }
@@ -57,5 +67,21 @@ public class LoginController {
 
             return jsonString;
         }
+    }
+
+
+    public String createToken(String email){
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + (60*60*24*1000)))
+                .signWith(getSigninKey(),SignatureAlgorithm.HS256)
+                .compact();
+    }
+    private Key getSigninKey() {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

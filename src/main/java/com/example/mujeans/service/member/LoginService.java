@@ -1,7 +1,6 @@
 package com.example.mujeans.service.member;
 
 import com.example.mujeans.model.MemberDTO;
-import com.example.mujeans.repository.board.BoardRepository;
 import com.example.mujeans.repository.member.LoginRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,7 +12,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LoginService {
 
-    private final LoginRepository loginRepository;
+    @Autowired
+    private LoginRepository loginRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
