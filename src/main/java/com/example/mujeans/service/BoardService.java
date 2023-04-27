@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.xml.stream.events.Comment;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,5 +74,9 @@ public class BoardService {
 
     public List<LetterDTO> getLetterList(){
         return letterRepository.findByUseYnAndMemSeq("Y", 5);
+    }
+
+    public LetterDTO getLetterDetail(int letSeq){
+        return letterRepository.findById(letSeq);
     }
 }

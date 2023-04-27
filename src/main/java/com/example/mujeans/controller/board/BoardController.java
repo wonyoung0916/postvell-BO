@@ -256,4 +256,35 @@ public class BoardController {
         }
     }
 
+    @ResponseBody
+    @GetMapping(value = "/letterDetail",  produces = "application/json; charset=UTF-8")
+    public String letterDetail(@Param("letSeq") int letSeq) {
+
+        // 변수 초기화
+        Gson gson = new Gson();
+        HashMap<String, Object> map = new HashMap<>();
+
+        String jsonString = "";
+        int code = 500;
+        String message = "게시글 조회중 오류가 발생하였습니다.";
+
+        try {
+            LetterDTO detail = boardService.getLetterDetail(letSeq);
+            // 주고받는 API 형태로 변환
+            map.put("list", detail);
+            map.put("code", 200);
+            map.put("message", "리스트 조회완료");
+        } catch (Exception e) {
+            map.put("code", code);
+            map.put("message", message);
+            e.printStackTrace();
+
+        } finally {
+            //json
+            jsonString = gson.toJson(map);
+
+            return jsonString;
+        }
+    }
+
 }
