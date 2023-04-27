@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service("boardService")
 @RequiredArgsConstructor
@@ -29,5 +30,9 @@ public class BoardService {
 
     public int getTotalPages(int totalCnt) {
         return (int) Math.ceil((double) totalCnt / 10);
+    }
+
+    public List<BoardDTO> getDetail(int bbsSeq){
+        return boardRepository.findById(bbsSeq);
     }
 }

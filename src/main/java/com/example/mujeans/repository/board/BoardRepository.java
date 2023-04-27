@@ -11,5 +11,6 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<BoardDTO, Integer> {
     List<BoardDTO> findAll();
     List<BoardDTO> findByUseYn(String useYn);
+    List<BoardDTO> findById(int bbsSeq);
     BoardDTO save(BoardDTO boardDTO);
 }
