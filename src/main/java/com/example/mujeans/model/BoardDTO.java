@@ -34,7 +34,7 @@ public class BoardDTO {
     private String regDate;
 
     @Transient
-    private String vellYn;
+    private Boolean vellYn;
 
     public BoardDTO(){
         this.useYn = "Y";

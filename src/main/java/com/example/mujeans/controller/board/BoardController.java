@@ -65,7 +65,7 @@ public class BoardController {
         String message = "게시글 등록중 오류가 발생하였습니다.";
 
         try {
-            if (boardDTO.getVellYn().equals("Y")){
+            if (boardDTO.getVellYn().equals(true)){
                 boardService.insert(boardDTO);
             }else{
                 boardService.insertLetter(letterDTO);
