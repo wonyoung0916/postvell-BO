@@ -30,6 +30,10 @@ public class MemberDTO {
     @Column(name = "CREATED_AT")
     private String createdAt;
 
+    @Column(name = "USE_YN")
+    private String useYn;
+
+
     public MemberDTO(){
         LocalDateTime now = LocalDateTime.now();
         this.createdAt = now.toString();
