@@ -32,7 +32,7 @@ public class LoginController {
 
     private static final String secretKey = "kjdfhkjhdkjhfQEjtfsdkjfhksa321425"; //AccessToken 체크시 필요한 암호키
     private static final String ALGORITHM = "AES"; //AES 알고리즘
-    private static final String KEY = "678swrFRKFid5sjf"; // AES 16자리 이하의 시크릿 키
+    private static final String KEY = "mysecretkey12345"; // AES 16자리 이하의 시크릿 키
     @ResponseBody
     @PostMapping("/loginProc")
     public String loginProc(HttpSession session, HttpServletRequest request, @ModelAttribute("email") String email, @ModelAttribute("pw") String pw) {
