@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BoardRepository extends JpaRepository<BoardDTO, Long> {
+public interface BoardRepository extends JpaRepository<BoardDTO, Integer> {
     List<BoardDTO> findAll();
     List<BoardDTO> findByUseYn(String useYn);
     BoardDTO save(BoardDTO boardDTO);

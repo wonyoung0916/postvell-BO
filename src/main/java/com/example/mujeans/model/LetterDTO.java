@@ -7,16 +7,19 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "BBS")
+@Table(name = "LETTER")
 @Getter @Setter
 @ToString
 @Component
 @Builder
 @AllArgsConstructor
-public class BoardDTO {
+public class LetterDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int bbsSeq;
+    private int letSeq;
+
+    @Column(name = "MEM_SEQ")
+    private int memSeq;
 
     @Column(name = "TITLE")
     private String title;
@@ -24,22 +27,12 @@ public class BoardDTO {
     @Column(name = "CONTENT")
     private String content;
 
-    @Column(name = "NICK_NAME")
-    private String nickNm;
-
-    @Column(name = "USE_YN")
-    private String useYn;
-
     @Column(name = "CREATED_AT")
-    private String regDate;
+    private String createdAt;
 
-    @Transient
-    private String vellYn;
-
-    public BoardDTO(){
-        this.useYn = "Y";
+    public LetterDTO(){
         LocalDateTime now = LocalDateTime.now();
-        this.regDate = now.toString();
+        this.createdAt = now.toString();
     }
 
 }

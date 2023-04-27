@@ -1,6 +1,7 @@
 package com.example.mujeans.controller.board;
 
 import com.example.mujeans.model.BoardDTO;
+import com.example.mujeans.model.LetterDTO;
 import com.example.mujeans.repository.board.BoardRepository;
 import com.example.mujeans.service.BoardService;
 import lombok.extern.log4j.Log4j2;
@@ -14,6 +15,7 @@ import java.util.List;
 @Log4j2
 @RestController
 @RequestMapping("/boards")
+@CrossOrigin(origins = "*")
 public class BoardController {
 
     @Autowired
@@ -52,7 +54,7 @@ public class BoardController {
 
     @ResponseBody
     @PostMapping(value = "/regist", produces = "application/json; charset=UTF-8")
-    public String setBoards(BoardDTO boardDTO, HttpServletRequest request) {
+    public String setBoards(BoardDTO boardDTO, LetterDTO letterDTO, HttpServletRequest request) {
         log.info("boardDTO====================================>"+ boardDTO);
         // 변수 초기화
         Gson gson = new Gson();
@@ -63,10 +65,13 @@ public class BoardController {
         String message = "게시글 등록중 오류가 발생하였습니다.";
 
         try {
-            //List<BoardDTO> result = boardService.insert(boardDTO);
-            boardService.insert(boardDTO);
+            if (boardDTO.getVellYn().equals("Y")){
+                boardService.insert(boardDTO);
+            }else{
+                boardService.insertLetter(letterDTO);
+            }
+
             // 주고받는 API 형태로 변환
-            //map.put("list", result);
             map.put("code", 200);
             map.put("message", "게시글 등록완료");
         } catch (Exception e) {
