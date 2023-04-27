@@ -1,0 +1,63 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://192.168.1.10:3306/mujeans
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: mujeans
+    password: mujeans!2023@
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+  mvc:
+    static-path-pattern: /static/**
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
+      add-mappings: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mujeansauth@gmail.com
+    password: Idevel616@
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+            port: 587
+          ssl:
+            trust: smtp.gmail.com
+server:
+  port: 9099
+config:
+  domain: http://localhost:9099
+
+logging:
+  pattern:
+    console: "[%d{HH:mm:ss.SSS}][%-5level][%logger.%method:line%line] - %msg%n"
+  level:
+    root: INFO
+    com.example.mujeans: TRACE
+    jdbc:
+      connection: OFF         # 커넥션 연결/종료 정보 출력
+      audit: WARN             # JDBC 트러블슈팅 경우를 제외하고는 사용 권장 X
+      sqlonly: OFF            # SQL만 로그만 출력
+      sqltiming: DEBUG        # SQL + 소요시간 출력
+      resultset: OFF          # ResultSet을 포함한 모든 JDBC 호출 정보를 출력
+      resultsettable: DEBUG   # SQL 결과 데이터 Table형식으로 출력
+    org.springframework: DEBUG
+    org.apache.http: DEBUG
+    httpclient.wire: DEBUG
