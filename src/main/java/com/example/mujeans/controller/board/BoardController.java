@@ -3,6 +3,7 @@ package com.example.mujeans.controller.board;
 import com.example.mujeans.model.BoardDTO;
 import com.example.mujeans.model.CommentDTO;
 import com.example.mujeans.model.LetterDTO;
+import com.example.mujeans.model.MemberDTO;
 import com.example.mujeans.repository.board.BoardRepository;
 import com.example.mujeans.service.BoardService;
 import com.example.mujeans.service.CommentService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import com.google.gson.Gson;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -112,7 +114,7 @@ public class BoardController {
         String message = "게시글 등록중 오류가 발생하였습니다.";
 
         try {
-            if (boardDTO.getVellYn().equals(true)){
+            if (boardDTO.getVellYn().equals(false)){
                 boardService.insert(boardDTO);
             }else{
                 boardService.insertLetter(letterDTO);
@@ -161,5 +163,57 @@ public class BoardController {
 
             return jsonString;
         }
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/deleteLetter", produces = "application/json; charset=UTF-8")
+    public String deleteLetter(HttpSession session, LetterDTO letterDTO) {
+        log.info(" boards/deleteLetter ====================================>"+ letterDTO);
+        // 변수 초기화
+        Gson gson = new Gson();
+        HashMap<String, Object> map = new HashMap<>();
+
+        //member
+        String email;
+        int memSeq;
+
+        //result
+        String jsonString = "";
+        int code = 500;
+        String message = "편지 삭제중 오류가 발생하였습니다.";
+        boolean isDone;
+
+        try {
+
+            /*
+            if (session.getAttribute("memSeq") == null){
+                throw new Exception("===== deleteLetter session null");
+            }*/
+
+            //memSeq = (int)session.getAttribute("ssMemSeq");
+            //memSeq = 5;
+
+           isDone = boardService.deleteLetter(letterDTO);
+            if (isDone){
+                code = 200;
+                message = "편지 삭제가 완료되었습니다.";
+            }else {
+                code = 502;
+                message = "편지 삭제에 실패했습니다.";
+            }
+
+        } catch (Exception e) {
+            code = 501;
+            message = "편지 삭제중 오류가 발생했습니다.";
+            e.printStackTrace();
+        }
+
+        //json
+        map.put("code", code);
+        map.put("message", message);
+
+        jsonString = gson.toJson(map);
+
+        return jsonString;
     }
 }
