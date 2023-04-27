@@ -30,7 +30,7 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-//    private static final String secretKey = "kjdfhkjhdkjhfQEjtfsdkjfhksa321425"; //AccessToken 체크시 필요한 암호키
+    private static final String secretKey = "kjdfhkjhdkjhfQEjtfsdkjfhksa321425"; //AccessToken 체크시 필요한 암호키
     private static final String ALGORITHM = "AES"; //AES 알고리즘
     private static final String KEY = "678swrFRKFid5sjf"; // AES 16자리 이하의 시크릿 키
     @ResponseBody
@@ -53,12 +53,12 @@ public class LoginController {
                 String enPw = mem.getPw();
                 boolean result = loginService.isPwMatch(pw,enPw);
                 if(result == true) {
-//                    String accessToken = createToken(email);
+                    String accessToken = createToken(email);
                     String enEmail = aesEncrypt(email);
                     // 주고받는 API 형태로 변환
                     map.put("code", 200);
                     map.put("message", "로그인 성공");
-//                    map.put("accessToken", accessToken);
+                    map.put("accessToken", accessToken);
                     map.put("enEmail", enEmail);
 
                     session.setAttribute("ssMemSeq", mem.getMemSeq());
@@ -86,20 +86,20 @@ public class LoginController {
     }
 
 
-//    public String createToken(String email){
-//        Claims claims = Jwts.claims();
-//        claims.put("email", email);
-//        return Jwts.builder()
-//                .setClaims(claims)
-//                .setIssuedAt(new Date())
-//                .setExpiration(new Date(System.currentTimeMillis() + (60*60*24*1000)))
-//                .signWith(getSigninKey(),SignatureAlgorithm.HS256)
-//                .compact();
-//    }
-//    private Key getSigninKey() {
-//        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-//        return Keys.hmacShaKeyFor(keyBytes);
-//    }
+    public String createToken(String email){
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + (60*60*24*1000)))
+                .signWith(getSigninKey(),SignatureAlgorithm.HS256)
+                .compact();
+    }
+    private Key getSigninKey() {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     // 문자열을 AES-128로 암호화하는 메소드
     public String aesEncrypt(String email) throws Exception {
