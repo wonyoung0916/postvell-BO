@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "BBS")
+@Getter @Setter
 @ToString
-@Getter
+@Component
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class BoardDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,18 @@ public class BoardDTO {
     private String content;
 
     @Column(name = "NICK_NAME")
-    private String nick_name;
+    private String nickNm;
+
+    @Column(name = "USE_YN")
+    private String useYn;
 
     @Column(name = "CREATED_AT")
     private String createdAt;
+
+    public BoardDTO(){
+        this.useYn = "Y";
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now.toString();
+    }
+
 }
