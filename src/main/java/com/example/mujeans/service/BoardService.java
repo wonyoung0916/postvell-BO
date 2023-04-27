@@ -60,15 +60,15 @@ public class BoardService {
 
     //230428 원영 (받은 편지 삭제)
     @Transactional
-    public boolean deleteLetter(LetterDTO letterDTO){
+    public boolean deleteLetter(LetterDTO letterDTO, int memSeq){
         //변수설정
         LetterDTO letter = letterRepository.findById(letterDTO.getLetSeq());
         boolean success = false;
         int letMemSeq = letterRepository.findById(letterDTO.getLetSeq()).getMemSeq();
 
-/*        if (letMemSeq != memSeq){
+        if (letMemSeq != memSeq){
             return false;
-        }*/
+        }
 
         //letter 데이터 수정
         letter.setUseYn("N");
@@ -82,8 +82,8 @@ public class BoardService {
         return success;
     }
 
-    public List<LetterDTO> getLetterList(){
-        return letterRepository.findByUseYnAndMemSeq("Y", 5);
+    public List<LetterDTO> getLetterList(int memSeq){
+        return letterRepository.findByUseYnAndMemSeq("Y", memSeq);
     }
 
     public LetterDTO getLetterDetail(int letSeq){

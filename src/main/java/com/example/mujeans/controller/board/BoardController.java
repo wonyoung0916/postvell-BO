@@ -198,17 +198,18 @@ public class BoardController {
         try {
 
             //토큰으로 멤버시퀀스 받아오기
-/*            Claims memInfo = getClaims(accessToken);
+            Claims memInfo = getClaims(accessToken);
+            log.info("memInfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + memInfo);
             memSeq = (int) memInfo.get("memSeq");
-            log.info("memSeq >>>>>>>>>>>>>>>>> " + memSeq);*/
-            /*
-            if (session.getAttribute("memSeq") == null){
+            log.info("memSeq >>>>>>>>>>>>>>>>> " + memSeq);
+
+            /*if (session.getAttribute("memSeq") == null){
                 throw new Exception("===== deleteLetter session null");
             }*/
 
             //memSeq = (int)session.getAttribute("ssMemSeq");
 
-           isDone = boardService.deleteLetter(letterDTO);
+           isDone = boardService.deleteLetter(letterDTO, memSeq);
             if (isDone){
                 code = 200;
                 message = "편지 삭제가 완료되었습니다.";
@@ -249,7 +250,7 @@ public class BoardController {
 
     @ResponseBody
     @GetMapping(value = "/letterList",  produces = "application/json; charset=UTF-8")
-    public String letterList(HttpSession session) {
+    public String letterList(@Param("accessToken") String accessToken) {
 
         // 변수 초기화
         Gson gson = new Gson();
@@ -258,17 +259,16 @@ public class BoardController {
         String jsonString = "";
         int code = 500;
         String message = "나의 우편함 조회중 오류가 발생하였습니다.";
+        int memSeq;
 
         try {
-            /*
-            if (session.getAttribute("memSeq") == null){
-                throw new Exception("===== deleteLetter session null");
-            }*/
+            //토큰으로 멤버시퀀스 받아오기
+            Claims memInfo = getClaims(accessToken);
+            log.info("memInfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + memInfo);
+            memSeq = (int) memInfo.get("memSeq");
+            log.info("memSeq >>>>>>>>>>>>>>>>> " + memSeq);
 
-            //memSeq = (int)session.getAttribute("ssMemSeq");
-
-
-            List<LetterDTO> list = boardService.getLetterList();
+            List<LetterDTO> list = boardService.getLetterList(memSeq);
             Collections.reverse(list);
             // 주고받는 API 형태로 변환
             map.put("list", list);
@@ -289,7 +289,7 @@ public class BoardController {
 
     @ResponseBody
     @GetMapping(value = "/letterDetail",  produces = "application/json; charset=UTF-8")
-    public String letterDetail(@Param("letSeq") int letSeq) {
+    public String letterDetail(@Param("letSeq") int letSeq, @Param("accessToken") String accessToken) {
 
         // 변수 초기화
         Gson gson = new Gson();
@@ -298,9 +298,22 @@ public class BoardController {
         String jsonString = "";
         int code = 500;
         String message = "게시글 조회중 오류가 발생하였습니다.";
+        int memSeq;
 
         try {
+            //토큰으로 멤버시퀀스 받아오기
+            Claims memInfo = getClaims(accessToken);
+            log.info("memInfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + memInfo);
+            memSeq = (int) memInfo.get("memSeq");
+            log.info("memSeq >>>>>>>>>>>>>>>>> " + memSeq);
+
             LetterDTO detail = boardService.getLetterDetail(letSeq);
+            if (detail.getMemSeq() != memSeq){
+                code = 501;
+                message = "비정상적인 접근입니다.";
+                throw new Exception();
+            }
+
             // 주고받는 API 형태로 변환
             map.put("list", detail);
             map.put("code", 200);

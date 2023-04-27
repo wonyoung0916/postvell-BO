@@ -116,6 +116,7 @@ public class EmailAuthController {
 
         try {
             certified = emailAuthService.certified(mailDTO);
+            log.info("certified:::"+certified);
             if (certified){
                 code = 200;
                 message = "인증에 성공했습니다.";

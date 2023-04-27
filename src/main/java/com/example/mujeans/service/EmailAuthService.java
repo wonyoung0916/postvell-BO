@@ -44,12 +44,12 @@ public class EmailAuthService {
         boolean success = false;
         MailDTO latestMail;
 
-        List<MailDTO> list = emailAuthRepository.findByEmailAndCertifiedYnOrderByCreatedAtDesc(mail.getEmail(), "Y");
+        List<MailDTO> list = emailAuthRepository.findByEmailAndCertifiedYnOrderByCreatedAtDesc(mail.getEmail(), "N");
 
         if (list.size() > 0){
             latestMail = list.get(0);
             log.info("이메일 인증 DTO :: "+latestMail);
-            latestMail.setCertifiedYn("N");
+            latestMail.setCertifiedYn("Y");
             success = true;
         }
 
@@ -113,7 +113,7 @@ public class EmailAuthService {
                         "		감사합니다."																																															+
                         "	</p>"																																																	+
                         "	<a style=\"color: #FFF; text-decoration: none; text-align: center;\""																																	+
-                        "	href=\"http://192.168.1.43:9099/emailAuth/certified?address=" + mailDto.getEmail() + "\" target=\"_blank\">"														+
+                        "	href=\"http://192.168.1.43:9099/emailAuth/certified?email=" + mailDto.getEmail() + "\" target=\"_blank\">"														+
                         "		<p"																																																	+
                         "			style=\"display: inline-block; width: 210px; height: 45px; margin: 30px 5px 40px; background: #02b875; line-height: 45px; vertical-align: middle; font-size: 16px;\">"							+
                         "			메일 인증</p>"																																														+
