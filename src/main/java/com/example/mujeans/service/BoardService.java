@@ -30,7 +30,7 @@ public class BoardService {
     public List<BoardDTO> getList(int page) {
         //int page = 0; // 페이지 번호 (0부터 시작)
         int size = 10; // 페이지 당 엔티티 개수
-        Pageable pageable = PageRequest.of(page, size); // Pageable 객체 생성
+        Pageable pageable = PageRequest.of(page-1, size); // Pageable 객체 생성
 
         Page<BoardDTO> boardDTOPage = boardRepository.findByUseYnOrderByRegDateDesc("Y", pageable);
         log.info("tqq==========================="+boardDTOPage);
@@ -88,5 +88,9 @@ public class BoardService {
 
     public LetterDTO getLetterDetail(int letSeq){
         return letterRepository.findById(letSeq);
+    }
+
+    public List<BoardDTO> getListCnt(){
+        return boardRepository.findAll();
     }
 }

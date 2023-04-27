@@ -57,7 +57,8 @@ public class BoardController {
 
             List<BoardDTO> list = boardService.getList(page);
             //Collections.reverse(list);
-            totalCnt = list.size();
+            List<BoardDTO> list2 = boardService.getListCnt();
+            totalCnt = list2.size();
             totalPage = boardService.getTotalPages(totalCnt);
 
             // 주고받는 API 형태로 변환
@@ -92,7 +93,7 @@ public class BoardController {
 
         try {
             List<BoardDTO> detail = boardService.getDetail(bbsSeq);
-            List<CommentDTO> commentList = commentService.getList(bbsSeq);
+            List<CommentDTO> commentList = commentService .getList(bbsSeq);
             // 주고받는 API 형태로 변환
             map.put("list", detail);
             map.put("replytList", commentList);
