@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class MemberDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int mem_seq;
+    private int memSeq;
 
     @Column(name = "MEM_EMAIL")
     private String email;
