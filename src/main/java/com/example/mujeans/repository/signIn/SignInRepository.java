@@ -16,4 +16,6 @@ public interface SignInRepository extends JpaRepository<MemberDTO, Integer> {
      //230427 주민 (중복회원 검증)
      boolean existsByEmail(String email);
 
+     //2304270 주민 (회원조회)
+     MemberDTO findByEmail(String email);
 }

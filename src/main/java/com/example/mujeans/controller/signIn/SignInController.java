@@ -24,6 +24,8 @@ public class SignInController {
         this.passwordEncoder = passwordEncoder;
     }
 
+
+    //230427 주민 (회원가입)
     @ResponseBody
     @PostMapping(value = "/signProc",  produces = "application/json; charset=UTF-8")
     public String signProc(MemberDTO memberDTO) {
@@ -69,5 +71,63 @@ public class SignInController {
         return jsonString;
     }
 
+
+
+
+    //230427 주민 (비밀번호 초기화)
+    @ResponseBody
+    @PostMapping(value = "/resetPw",  produces = "application/json; charset=UTF-8")
+    public String resetPw(MemberDTO memberDTO) {
+        log.info(" signIn/resetPw ====================================>"+ memberDTO);
+        // 변수 초기화
+        Gson gson = new Gson();
+        HashMap<String, Object> map = new HashMap<>();
+
+        String jsonString = "";
+        String pw = "";
+        String encodedPw = "";
+        boolean isDone;
+        int code;
+        String message;
+
+        try {
+
+            //비밀번호 암호화
+            pw = memberDTO.getPw();
+            if (pw == null || pw.trim().equals("")){
+                code = 503;
+                message = "비밀번호를 입력해주세요.";
+
+            }else {
+
+                encodedPw = passwordEncoder.encode(pw);
+                memberDTO.setPw(encodedPw);
+                memberDTO.setUseYn("Y");
+
+                isDone = signInService.resetPw(memberDTO);
+                if (isDone){
+                    code = 200;
+                    message = "비밀번호 초기화가 완료되었습니다.";
+                }else {
+                    code = 502;
+                    message = "비밀번호 초기화에 실패했습니다.";
+                }
+
+            }
+
+        } catch (Exception e) {
+            code = 501;
+            message = "비밀번호 초기화중 오류가 발생했습니다.";
+            log.error("Exception::"+e.getMessage());
+            e.printStackTrace();
+        }
+
+        //json
+        map.put("code", code);
+        map.put("message", message);
+        jsonString = gson.toJson(map);
+
+        return jsonString;
+    }
 
 }
