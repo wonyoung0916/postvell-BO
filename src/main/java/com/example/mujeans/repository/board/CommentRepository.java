@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<CommentDTO, Integer> {
     List<CommentDTO> findByBbsSeq(int bbsSeq);
-    //BoardDTO save(BoardDTO boardDTO);
+    CommentDTO save(CommentDTO commentDTO);
 }

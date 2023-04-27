@@ -1,12 +1,15 @@
 package com.example.mujeans.service;
 
 import com.example.mujeans.model.BoardDTO;
+import com.example.mujeans.model.CommentDTO;
 import com.example.mujeans.model.LetterDTO;
 import com.example.mujeans.repository.board.BoardRepository;
+import com.example.mujeans.repository.board.CommentRepository;
 import com.example.mujeans.repository.letter.LetterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.xml.stream.events.Comment;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +18,7 @@ import java.util.Optional;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final LetterRepository letterRepository;
+    private final CommentRepository commentRepository;
 
     public List<BoardDTO> getList() {
          return boardRepository.findByUseYn("Y");
@@ -34,5 +38,8 @@ public class BoardService {
 
     public List<BoardDTO> getDetail(int bbsSeq){
         return boardRepository.findById(bbsSeq);
+    }
+    public CommentDTO insertComment(CommentDTO commentDTO){
+        return commentRepository.save(commentDTO);
     }
 }

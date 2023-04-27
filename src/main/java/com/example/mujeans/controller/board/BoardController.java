@@ -132,4 +132,34 @@ public class BoardController {
             return jsonString;
         }
     }
+
+    @ResponseBody
+    @PostMapping(value = "/addReply", produces = "application/json; charset=UTF-8")
+    public String setComments(CommentDTO commentDTO) {
+
+        // 변수 초기화
+        Gson gson = new Gson();
+        HashMap<String, Object> map = new HashMap<>();
+
+        String jsonString = "";
+        int code = 500;
+        String message = "댓글 등록중 오류가 발생하였습니다.";
+
+        try {
+            boardService.insertComment(commentDTO);
+
+            // 주고받는 API 형태로 변환
+            map.put("code", 200);
+            map.put("message", "댓글 등록완료");
+        } catch (Exception e) {
+            map.put("code", code);
+            map.put("message", message);
+            e.printStackTrace();
+        } finally {
+            //json
+            jsonString = gson.toJson(map);
+
+            return jsonString;
+        }
+    }
 }
