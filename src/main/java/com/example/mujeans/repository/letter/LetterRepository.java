@@ -12,5 +12,6 @@ public interface LetterRepository extends JpaRepository<LetterDTO, Integer> {
     LetterDTO save(LetterDTO letterDTO);
 
     LetterDTO findById(int letSeq);
+    public List<LetterDTO> findByUseYnAndMemSeq(String useYn, int memSeq);
 
 }

@@ -191,7 +191,6 @@ public class BoardController {
             }*/
 
             //memSeq = (int)session.getAttribute("ssMemSeq");
-            //memSeq = 5;
 
            isDone = boardService.deleteLetter(letterDTO);
             if (isDone){
@@ -216,4 +215,45 @@ public class BoardController {
 
         return jsonString;
     }
+
+    @ResponseBody
+    @GetMapping(value = "/letterList",  produces = "application/json; charset=UTF-8")
+    public String letterList(HttpSession session) {
+
+        // 변수 초기화
+        Gson gson = new Gson();
+        HashMap<String, Object> map = new HashMap<>();
+
+        String jsonString = "";
+        int code = 500;
+        String message = "나의 우편함 조회중 오류가 발생하였습니다.";
+
+        try {
+            /*
+            if (session.getAttribute("memSeq") == null){
+                throw new Exception("===== deleteLetter session null");
+            }*/
+
+            //memSeq = (int)session.getAttribute("ssMemSeq");
+
+
+            List<LetterDTO> list = boardService.getLetterList();
+
+            // 주고받는 API 형태로 변환
+            map.put("list", list);
+            map.put("code", 200);
+            map.put("message", "리스트 조회완료");
+        } catch (Exception e) {
+            map.put("code", code);
+            map.put("message", message);
+            e.printStackTrace();
+
+        } finally {
+            //json
+            jsonString = gson.toJson(map);
+
+            return jsonString;
+        }
+    }
+
 }

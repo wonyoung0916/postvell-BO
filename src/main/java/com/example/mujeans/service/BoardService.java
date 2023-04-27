@@ -70,4 +70,8 @@ public class BoardService {
 
         return success;
     }
+
+    public List<LetterDTO> getLetterList(){
+        return letterRepository.findByUseYnAndMemSeq("Y", 5);
+    }
 }
