@@ -51,9 +51,10 @@ public class LoginController {
             MemberDTO mem = loginService.loginChk(email);
             if(mem != null) {
                 String enPw = mem.getPw();
+                int memSeq = mem.getMemSeq();
                 boolean result = loginService.isPwMatch(pw,enPw);
                 if(result == true) {
-                    String accessToken = createToken(email);
+                    String accessToken = createToken(email,memSeq);
                     String enEmail = aesEncrypt(email);
                     // 주고받는 API 형태로 변환
                     map.put("code", 200);
@@ -86,9 +87,10 @@ public class LoginController {
     }
 
 
-    public String createToken(String email){
+    public String createToken(String email, int memSeq){
         Claims claims = Jwts.claims();
         claims.put("email", email);
+        claims.put("memSeq", memSeq);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
