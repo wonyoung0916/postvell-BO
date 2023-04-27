@@ -26,4 +26,8 @@ public class BoardService {
     public LetterDTO insertLetter(LetterDTO letterDTO){
         return letterRepository.save(letterDTO);
     }
+
+    public int getTotalPages(int totalCnt) {
+        return (int) Math.ceil((double) totalCnt / 10);
+    }
 }
