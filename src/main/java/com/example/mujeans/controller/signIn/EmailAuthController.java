@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
 @Log4j2
@@ -103,7 +101,7 @@ public class EmailAuthController {
     }
 
     @GetMapping(value = "/certified")
-    public String certified(HttpSession session, HttpServletRequest request,
+    public String certified(HttpServletRequest request,
                           MailDTO mailDTO) throws MessagingException {
         log.info(" emailAuth/certified ====================================>"+ mailDTO);
 

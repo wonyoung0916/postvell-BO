@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import com.google.gson.Gson;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Collections;
@@ -199,15 +198,7 @@ public class BoardController {
 
             //토큰으로 멤버시퀀스 받아오기
             Claims memInfo = getClaims(accessToken);
-            log.info("memInfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + memInfo);
             memSeq = (int) memInfo.get("memSeq");
-            log.info("memSeq >>>>>>>>>>>>>>>>> " + memSeq);
-
-            /*if (session.getAttribute("memSeq") == null){
-                throw new Exception("===== deleteLetter session null");
-            }*/
-
-            //memSeq = (int)session.getAttribute("ssMemSeq");
 
            isDone = boardService.deleteLetter(letterDTO, memSeq);
             if (isDone){
@@ -264,9 +255,7 @@ public class BoardController {
         try {
             //토큰으로 멤버시퀀스 받아오기
             Claims memInfo = getClaims(accessToken);
-            log.info("memInfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + memInfo);
             memSeq = (int) memInfo.get("memSeq");
-            log.info("memSeq >>>>>>>>>>>>>>>>> " + memSeq);
 
             List<LetterDTO> list = boardService.getLetterList(memSeq);
             Collections.reverse(list);
@@ -303,9 +292,7 @@ public class BoardController {
         try {
             //토큰으로 멤버시퀀스 받아오기
             Claims memInfo = getClaims(accessToken);
-            log.info("memInfo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + memInfo);
             memSeq = (int) memInfo.get("memSeq");
-            log.info("memSeq >>>>>>>>>>>>>>>>> " + memSeq);
 
             LetterDTO detail = boardService.getLetterDetail(letSeq);
             if (detail.getMemSeq() != memSeq){
