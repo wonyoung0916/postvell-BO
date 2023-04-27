@@ -11,8 +11,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -25,8 +28,9 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    private static final String secretKey = "kjdfhkjhdkjhfQEjtfsdkjfhksa321425"; //Token 체크시 필요한 암호키
-
+    private static final String secretKey = "kjdfhkjhdkjhfQEjtfsdkjfhksa321425"; //AccessToken 체크시 필요한 암호키
+    private static final String ALGORITHM = "AES"; //AES 알고리즘
+    private static final String KEY = "678swrFRKFid5sjf"; // AES 16자리 이하의 시크릿 키
     @ResponseBody
     @PostMapping("/loginProc")
     public String loginProc(@ModelAttribute("email") String email, @ModelAttribute("pw") String pw) {
@@ -44,10 +48,12 @@ public class LoginController {
                 boolean result = loginService.isPwMatch(pw,enPw);
                 if(result == true) {
                     String accessToken = createToken(email);
+                    String enEmail = aesEncrypt(email);
                     // 주고받는 API 형태로 변환
                     map.put("code", 200);
                     map.put("message", "로그인 성공");
                     map.put("accessToken", accessToken);
+                    map.put("enEmail", enEmail);
                 } else {
                     throw new Exception();
                 }
@@ -83,5 +89,14 @@ public class LoginController {
     private Key getSigninKey() {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    // 문자열을 AES-128로 암호화하는 메소드
+    public String aesEncrypt(String email) throws Exception {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+        byte[] encryptedValue = cipher.doFinal(email.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(encryptedValue);
     }
 }
