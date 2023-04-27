@@ -8,6 +8,9 @@ import com.example.mujeans.repository.board.CommentRepository;
 import com.example.mujeans.repository.letter.LetterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,8 +27,15 @@ public class BoardService {
     private final LetterRepository letterRepository;
     private final CommentRepository commentRepository;
 
-    public List<BoardDTO> getList() {
-         return boardRepository.findByUseYn("Y");
+    public List<BoardDTO> getList(int page) {
+        //int page = 0; // 페이지 번호 (0부터 시작)
+        int size = 10; // 페이지 당 엔티티 개수
+        Pageable pageable = PageRequest.of(page, size); // Pageable 객체 생성
+
+        Page<BoardDTO> boardDTOPage = boardRepository.findByUseYnOrderByRegDateDesc("Y", pageable);
+        log.info("tqq==========================="+boardDTOPage);
+        log.info(boardDTOPage.getContent());
+        return boardDTOPage.getContent();
     }
 
     public BoardDTO insert(BoardDTO boardDTO) {

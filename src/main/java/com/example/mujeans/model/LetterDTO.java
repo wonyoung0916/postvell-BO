@@ -28,15 +28,20 @@ public class LetterDTO {
     private String content;
 
     @Column(name = "CREATED_AT")
-    private String createdAt;
+    private String regDate;
 
     @Column(name = "USE_YN")
     private String useYn;
 
+    @Column(name = "NICK_NAME")
+    private String nickNm;
+
+    @Column(name = "IMAGE_PATH")
+    private String image;
+
     public LetterDTO(){
         this.useYn = "Y";
         LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now.toString();
+        this.regDate = now.toString();
     }
-
 }
