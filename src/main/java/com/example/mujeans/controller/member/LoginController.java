@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
@@ -28,12 +30,12 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    private static final String secretKey = "kjdfhkjhdkjhfQEjtfsdkjfhksa321425"; //AccessToken 체크시 필요한 암호키
+//    private static final String secretKey = "kjdfhkjhdkjhfQEjtfsdkjfhksa321425"; //AccessToken 체크시 필요한 암호키
     private static final String ALGORITHM = "AES"; //AES 알고리즘
     private static final String KEY = "678swrFRKFid5sjf"; // AES 16자리 이하의 시크릿 키
     @ResponseBody
     @PostMapping("/loginProc")
-    public String loginProc(@ModelAttribute("email") String email, @ModelAttribute("pw") String pw) {
+    public String loginProc(HttpSession session, HttpServletRequest request, @ModelAttribute("email") String email, @ModelAttribute("pw") String pw) {
         Gson gson = new Gson();
         HashMap<String,Object> map = new HashMap<>();
 
@@ -41,19 +43,27 @@ public class LoginController {
         String code = "500";
         String message = "로그인 정보가 일치하지 않습니다";
 
+        //세션 초기화
+        session.invalidate();
+        session = request.getSession(true);
+
         try {
             MemberDTO mem = loginService.loginChk(email);
             if(mem != null) {
                 String enPw = mem.getPw();
                 boolean result = loginService.isPwMatch(pw,enPw);
                 if(result == true) {
-                    String accessToken = createToken(email);
+//                    String accessToken = createToken(email);
                     String enEmail = aesEncrypt(email);
                     // 주고받는 API 형태로 변환
                     map.put("code", 200);
                     map.put("message", "로그인 성공");
-                    map.put("accessToken", accessToken);
+//                    map.put("accessToken", accessToken);
                     map.put("enEmail", enEmail);
+
+                    session.setAttribute("ssMemSeq", mem.getMemSeq());
+                    session.setAttribute("ssEmail", mem.getEmail());
+
                 } else {
                     throw new Exception();
                 }
@@ -76,20 +86,20 @@ public class LoginController {
     }
 
 
-    public String createToken(String email){
-        Claims claims = Jwts.claims();
-        claims.put("email", email);
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + (60*60*24*1000)))
-                .signWith(getSigninKey(),SignatureAlgorithm.HS256)
-                .compact();
-    }
-    private Key getSigninKey() {
-        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+//    public String createToken(String email){
+//        Claims claims = Jwts.claims();
+//        claims.put("email", email);
+//        return Jwts.builder()
+//                .setClaims(claims)
+//                .setIssuedAt(new Date())
+//                .setExpiration(new Date(System.currentTimeMillis() + (60*60*24*1000)))
+//                .signWith(getSigninKey(),SignatureAlgorithm.HS256)
+//                .compact();
+//    }
+//    private Key getSigninKey() {
+//        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+//        return Keys.hmacShaKeyFor(keyBytes);
+//    }
 
     // 문자열을 AES-128로 암호화하는 메소드
     public String aesEncrypt(String email) throws Exception {
@@ -99,4 +109,14 @@ public class LoginController {
         byte[] encryptedValue = cipher.doFinal(email.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(encryptedValue);
     }
+
+    @GetMapping("/logoutProc")
+    public String logoutProc(HttpSession session) {
+
+        session.invalidate();
+
+        // 리다이렉트 처리
+        return "redirect:/";
+    }
+
 }
