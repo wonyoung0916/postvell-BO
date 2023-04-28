@@ -117,7 +117,7 @@ public class SignInController {
                 memberDTO.setPw(encodedPw);
                 memberDTO.setUseYn("Y");
 
-                isDone = signInService.resetPw(memberDTO);
+                isDone = signInService.resetPw(memberDTO, authCode);
                 if (isDone){
                     code = 200;
                     message = "비밀번호 초기화가 완료되었습니다.";

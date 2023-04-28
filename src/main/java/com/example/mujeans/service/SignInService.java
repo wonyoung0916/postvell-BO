@@ -77,22 +77,34 @@ public class SignInService {
 
     //230427 주민 (비밀번호 초기화)
     @Transactional
-    public boolean resetPw(MemberDTO memberDTO){
+    public boolean resetPw(MemberDTO memberDTO, String authCode){
         //변수정리
         boolean success = false;
+        boolean isReset = false;
         MemberDTO myMember = signInRepository.findByEmail(memberDTO.getEmail());
+        MailDTO latestMail;
 
         //조회 가능한 회원이 없는 경우
         if (myMember == null){
-            return success;
+            return isReset;
+        }
+
+        //이메일 인증
+        List<MailDTO> list = emailAuthRepository.findByEmailAndCodeAndCertifiedYnOrderByCreatedAtDesc(memberDTO.getEmail(), authCode, "N");
+
+        if (list.size() > 0){
+            latestMail = list.get(0);
+            log.info("이메일 인증 DTO :: "+latestMail);
+            latestMail.setCertifiedYn("Y");
+            success = true;
         }
 
         //member데이터 수정
         myMember.setPw(memberDTO.getPw());
         if (myMember.getPw().equals(memberDTO.getPw())){
-            success = true;
+            isReset = true;
         }
 
-        return success;
+        return (success && isReset);
     }
 }
