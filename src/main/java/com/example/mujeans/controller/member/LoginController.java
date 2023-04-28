@@ -37,6 +37,17 @@ public class LoginController {
         String message = "로그인 정보가 일치하지 않습니다";
 
         try {
+            if(email.equals(null) || email.equals("")) {
+                code = "501";
+                message = "이메일을 입력해주세요.";
+                throw new Exception();
+            }
+            if(pw.equals(null) || pw.equals("")) {
+                code = "502";
+                message = "비밀번호를 입력해주세요.";
+                throw new Exception();
+            }
+
             MemberDTO mem = loginService.loginChk(email);
             if (mem != null) {
                 String enPw = mem.getPw();
