@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Log4j2
 @RestController
@@ -28,11 +29,16 @@ public class SignInController {
     //230427 주민 (회원가입)
     @ResponseBody
     @PostMapping(value = "/signProc",  produces = "application/json; charset=UTF-8")
-    public String signProc(MemberDTO memberDTO) {
-        log.info(" signIn/signProc ====================================>"+ memberDTO);
+    public String signProc(MemberDTO memberDTO, String authCode) {
+        log.info(" signIn/signProc ====================================>"+ memberDTO + "/ authCode : "+authCode);
         // 변수 초기화
         Gson gson = new Gson();
         HashMap<String, Object> map = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
+
+        //확인결과
+        boolean isDup = false; // 중복회원 검사 : false - 중복회원 없음 / true - 중복회원 있음
+        boolean success = false; // 이메일 인증 검사 : false - 이메일 인증 안됨 / true - 이메일 인증 완료
 
         String jsonString = "";
         String encodedPw = "";
@@ -46,11 +52,18 @@ public class SignInController {
             memberDTO.setPw(encodedPw);
             memberDTO.setUseYn("Y");
 
-            MemberDTO resultDto = signInService.signProc(memberDTO);
-            if (resultDto == null){
+            response = signInService.signProc(memberDTO, authCode);
+
+            isDup = (boolean) response.get("isDup");
+            success = (boolean) response.get("success");
+
+            if (isDup){
                 //이메일 중복이 있을경우
                 code = 502;
                 message = "이미 등록된 이메일입니다.";
+            }else if (!success){
+                code = 503;
+                message = "이메일 검증 코드가 일치하지 않습니다.";
             }else {
                 code = 200;
                 message = "회원가입에 성공했습니다.";
@@ -77,7 +90,7 @@ public class SignInController {
     //230427 주민 (비밀번호 초기화)
     @ResponseBody
     @PostMapping(value = "/resetPw",  produces = "application/json; charset=UTF-8")
-    public String resetPw(MemberDTO memberDTO) {
+    public String resetPw(MemberDTO memberDTO, String authCode) {
         log.info(" signIn/resetPw ====================================>"+ memberDTO);
         // 변수 초기화
         Gson gson = new Gson();

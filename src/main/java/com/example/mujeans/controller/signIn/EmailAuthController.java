@@ -115,6 +115,8 @@ public class EmailAuthController {
         return jsonString;
     }
 
+    /*
+    // 230428 주민 ()
     @ResponseBody
     @GetMapping(value = "/certified")
     public String certified(HttpServletRequest request,
@@ -151,6 +153,8 @@ public class EmailAuthController {
 
         return gson.toJson(map);
     }
+
+     */
 
     /*
     // 인증 메일 인증하기 버튼

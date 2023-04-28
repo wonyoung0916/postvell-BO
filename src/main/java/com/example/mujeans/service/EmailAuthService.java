@@ -36,7 +36,7 @@ public class EmailAuthService {
     private final JavaMailSender javaMailSender;
 
     //인증번호 생성
-    private final String ePw = createKey();
+    //private final String ePw = createKey();
 
     @Transactional
     public boolean certified(MailDTO mail){
@@ -58,24 +58,25 @@ public class EmailAuthService {
 
     @Transactional
     public String sendSimpleMessage(MailDTO mailDto)throws Exception {
-        MimeMessage message = createMessage(mailDto);
+        String key = createKey();
+        MimeMessage message = createMessage(mailDto, key);
 
         try{
             javaMailSender.send(message); // 메일 발송
 
-            mailDto.setCode(ePw);
+            mailDto.setCode(key);
             MailDTO mailDTO = emailAuthRepository.save(mailDto);
 
         }catch(MailException es){
             es.printStackTrace();
             throw new IllegalArgumentException();
         }
-        return mailDto.getCode(); // 메일로 보냈던 인증 코드를 서버로 리턴
+        return key; // 메일로 보냈던 인증 코드를 서버로 리턴
     }
 
-    public MimeMessage createMessage(MailDTO mailDto)throws MessagingException, UnsupportedEncodingException {
+    public MimeMessage createMessage(MailDTO mailDto, String key) throws MessagingException, UnsupportedEncodingException {
         log.info("보내는 대상 : "+ mailDto.getEmail());
-        log.info("인증 번호 : " + ePw);
+        log.info("인증 번호 : " + key);
         MimeMessage  message = javaMailSender.createMimeMessage();
 
         message.addRecipients(MimeMessage.RecipientType.TO, mailDto.getEmail()); // to 보내는 대상
@@ -87,7 +88,7 @@ public class EmailAuthService {
         msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>";
         msg += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">이메일 인증 코드입니다.</p>";
         msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
-        msg += ePw;
+        msg += key;
         msg += "</td></tr></tbody></table></div>";
 
         /*
