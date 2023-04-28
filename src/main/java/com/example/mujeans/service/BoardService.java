@@ -57,7 +57,9 @@ public class BoardService {
     public CommentDTO insertComment(CommentDTO commentDTO){
         List<CommentDTO> list = commentRepository.findByBbsSeq(commentDTO.getBbsSeq());
         int size = list.size();
-        commentDTO.setNickNm("무명의 덕후"+size+1);
+        log.info("size========================="+size);
+
+        commentDTO.setNickNm("무명의 덕후"+(size+1));
         return commentRepository.save(commentDTO);
     }
 
